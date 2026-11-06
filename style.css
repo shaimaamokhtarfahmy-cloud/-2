@@ -1,0 +1,147 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    user-select: none;
+    background-color: #1e272e;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* الواجهة العلوية */
+#hud {
+    position: absolute; top: 15px; display: flex; gap: 20px; align-items: center;
+    background: rgba(255, 255, 255, 0.9); padding: 15px 25px; border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8); z-index: 20; flex-wrap: wrap; justify-content: center;
+    border-bottom: 4px solid #6c5ce7;
+}
+
+.control-box { display: flex; gap: 10px; font-weight: bold; align-items: center; color: #2d3436;}
+select { padding: 5px; border-radius: 5px; font-size: 14px; outline: none; border: 2px solid #b2bec3;}
+
+.locks-status { font-weight: bold; font-size: 18px; color: #d63031; border-right: 2px solid #ccc; padding-right: 15px; }
+
+button {
+    padding: 10px 20px; cursor: pointer; background-color: #6c5ce7;
+    color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px;
+    transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+button:hover:not(:disabled) { background-color: #a29bfe; transform: scale(1.05); }
+
+/* مشهد القلعة والأبواب 3D */
+#castle-scene {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%232d3436"/><rect width="45" height="45" fill="%23636e72" stroke="%232d3436" stroke-width="2"/></svg>');
+}
+
+#door-frame {
+    width: 350px;
+    height: 450px;
+    background: #000;
+    position: relative;
+    display: flex;
+    perspective: 1500px; /* لعمل البعد الثالث لفتح الباب */
+    border: 15px solid #4a69bd;
+    border-bottom: none;
+    border-radius: 150px 150px 0 0;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+}
+
+#next-room-bg {
+    position: absolute; width: 100%; height: 100%;
+    background: radial-gradient(circle, #f1c40f, #e67e22);
+    display: flex; justify-content: center; align-items: center;
+    font-size: 30px; font-weight: bold; color: white; text-shadow: 0 0 10px #fff;
+    opacity: 0; transition: opacity 1s; border-radius: 135px 135px 0 0;
+}
+
+.door {
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, #834d18, #5c3511);
+    border: 2px solid #3e2723;
+    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* نقاط ارتكاز مفصلات الباب */
+.left-door { transform-origin: left; border-radius: 135px 0 0 0; border-right: 4px solid #2c1a08;}
+.right-door { transform-origin: right; border-radius: 0 135px 0 0; border-left: 4px solid #2c1a08;}
+
+/* فئات فتح الباب */
+.open-left { transform: rotateY(105deg); }
+.open-right { transform: rotateY(-105deg); }
+
+/* الأقفال */
+#locks-container {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 5;
+}
+
+.padlock {
+    font-size: 40px;
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.8));
+    transition: all 0.5s;
+}
+
+.broken-lock {
+    transform: translateY(100px) rotate(45deg);
+    opacity: 0;
+}
+
+/* الرسائل */
+#feedback-message {
+    position: absolute; top: 35%; font-size: 40px; font-weight: bold;
+    color: #fdcb6e; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    z-index: 20; animation: popIn 1.5s ease-out forwards;
+}
+
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.5); }
+    20% { opacity: 1; transform: scale(1.2); }
+    80% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1); }
+}
+
+/* المربع الحواري */
+.hidden { display: none !important; }
+#quiz-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; z-index: 100;
+}
+.modal-content {
+    background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px;
+    box-shadow: 0 0 30px #6c5ce7; text-align: center; border: 4px solid #6c5ce7;
+}
+.lesson-box { background: #dfe6e9; padding: 15px; border-radius: 8px; border-right: 5px solid #6c5ce7; margin-bottom: 20px; }
+#lesson-text { font-size: 18px; line-height: 1.6; font-weight: bold; color: #2d3436;}
+.badge { background: #00b894; color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold; font-size: 12px;}
+#options { display: flex; flex-direction: column; gap: 10px; margin-top: 20px;}
+.opt-btn { background-color: #2d3436; }
+.opt-btn:hover { background-color: #636e72; }
+.action-btn { background-color: #00b894; }
+
+
+
+
